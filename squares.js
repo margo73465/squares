@@ -1,8 +1,8 @@
 var height = window.innerHeight,
 		width = window.innerWidth,
 		center = [width/2, height/2],
-		grid_dim = Math.floor(width/40)
-		square_dim = 3 * grid_dim,
+		grid_dim = Math.floor(width/80)
+		square_dim = 7 * grid_dim,
 		border = grid_dim;
 
 var square_maker;
@@ -26,8 +26,8 @@ function create_grid() {
 				var point = {
 					has_square: false,
 					id: grid.length,
-					x: i * (2 * grid_dim) + border,
-					y: j * (2 * grid_dim) + border
+					x: i * (4 * grid_dim) + border,
+					y: j * (4 * grid_dim) + border
 				};
 				grid.push(point);
 			}
@@ -41,48 +41,107 @@ function create_grid() {
 function draw_square(x, y, id) {
 
 	// Outer square
-	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
-	newElement.setAttribute("x", x);
-	newElement.setAttribute("y", y);
-	newElement.setAttribute("width", square_dim);
-	newElement.setAttribute("height", square_dim);
-	newElement.setAttribute("id", id);
-	newElement.style.stroke = "none"; 
-	newElement.style.fill = "white";
-	svg.appendChild(newElement);
+	var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+	g.setAttribute("id", id);
+	g.setAttribute("opacity", 0.0);
+	svg.appendChild(g);
+
+	var outer_square = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+	outer_square.setAttribute("x", x);
+	outer_square.setAttribute("y", y);
+	outer_square.setAttribute("width", square_dim);
+	outer_square.setAttribute("height", square_dim);
+	outer_square.style.stroke = "none"; 
+	outer_square.style.fill = "white";
+	g.appendChild(outer_square);
+
+	var inner_square = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+	inner_square.setAttribute("x", x + grid_dim);
+	inner_square.setAttribute("y", y + grid_dim);
+	inner_square.setAttribute("width", square_dim - grid_dim * 2);
+	inner_square.setAttribute("height", square_dim - grid_dim * 2);
+	inner_square.style.stroke = "none"; 
+	inner_square.style.fill = "black";
+	g.appendChild(inner_square);
+
+	start_fade_in(g);
 
 }
 
 function draw_random_square(grid) {
 
-	// var flip = Math.floor(Math.random() * 2);
-
-	// if (flip === 0) {
-	// 	// On double even grid
-	// 	x = (Math.floor(Math.random() * 10) * 2) * (2 * grid_dim) + border;
-	// 	y = (Math.floor(Math.random() * 10) * 2) * (2 * grid_dim) + border;
-	// } else {
-	// 	// On double odd grid
-	// 	x = (Math.floor(Math.random() * 10) * 2 + 1) * (2 * grid_dim) + border;
-	// 	y = (Math.floor(Math.random() * 10) * 2 + 1) * (2 * grid_dim) + border;
-	// }
-
-	var grid_point = grid[Math.floor(Math.random() * grid.length)];
+	//var grid_point = grid[Math.floor(Math.random() * grid.length)];
+	grid_point = grid[0];
 
 	if (grid_point.has_square === false) {
-		draw_square(grid_point.x, grid_point.y, grid_point.id);
+	
 		grid_point.has_square = true;
 		grid[grid_point.id] = grid_point;
+		draw_square(grid_point.x, grid_point.y, grid_point.id);
+	
 	} else {
-		//var svg_doc = svg.contentDocument;		
+
 		var child = svg.getElementById(grid_point.id);
-		svg.removeChild(child);
-		grid_point.has_square = false;
-		grid[grid_point.id] = grid_point;
-		draw_random_square(grid);
+		start_fade_out(child);
+		setTimeout(remove_square, 1000, child, grid_point);
+
 	}
 }
 
-// draw_square(center[0] - square_dim/2, center[1] - square_dim/2);
+function remove_square(child, grid_point) {
+	console.log(svg);
+	console.log(child);
+	svg.removeChild(child);
+	grid_point.has_square = false;
+	grid[grid_point.id] = grid_point;
+	draw_random_square(grid);
+}
 
-square_maker = setInterval(function () { draw_random_square(grid); }, 300);
+function start_fade_in(svg_element) {
+	var opacity = svg_element.getAttribute("opacity");
+	
+	var fade = setInterval(function() {
+			if (svg_element.getAttribute("opacity") >= 0.9) {
+				clearInterval(fade);
+			}
+			fade_in(svg_element);
+		}, 10);
+}
+
+function fade_in(svg_element, fade) {
+	console.log("opacity up!");
+	var opacity = svg_element.getAttribute("opacity");
+	var new_opacity = Number(opacity) + 0.1;
+	svg_element.setAttribute("opacity", new_opacity);
+}
+
+function start_fade_out(svg_element) {
+	var fade = setInterval(function() {
+			if (svg_element.getAttribute("opacity") <= 0.1) {
+				clearInterval(fade);
+			}
+			fade_out(svg_element);
+		}, 10);
+}
+
+function fade_out(svg_element, fade) {
+	console.log("opacity down!")
+	var opacity = svg_element.getAttribute("opacity");	
+	var new_opacity = Number(opacity) - 0.1;
+	svg_element.setAttribute("opacity", new_opacity);
+}
+
+// draw_square(center[0] - square_dim/2, center[1] - square_dim/2, "MIDDLE");
+// var square = svg.getElementById("MIDDLE");
+// setTimeout(start_fade_out, 1000, square);
+
+draw_random_square(grid);
+setTimeout(draw_random_square, 1000, grid);
+setTimeout(draw_random_square, 1000, grid);
+setTimeout(draw_random_square, 1000, grid);
+setTimeout(draw_random_square, 1000, grid);
+setTimeout(draw_random_square, 1000, grid);
+setTimeout(draw_random_square, 1000, grid);
+setTimeout(draw_random_square, 1000, grid);
+
+//square_maker = setInterval(draw_random_square, 1002, grid);
