@@ -2,8 +2,8 @@ var height = window.innerHeight,
 		width = window.innerWidth,
 		grid_dim = Math.floor(width / 80),
 		square_dim = 7 * grid_dim,
-		grid_height = Math.ceil(height / (square_dim + grid_dim)) * 2,
-		grid_width = Math.ceil(width / (square_dim + grid_dim)) * 2;
+		grid_height = Math.ceil(height / (square_dim + grid_dim)) * 4,
+		grid_width = Math.ceil(width / (square_dim + grid_dim)) * 4;
 
 var square_maker, 
 		speed = 600, // Must be greater than 200 for fades to work
@@ -16,6 +16,8 @@ svg.setAttribute("onclick", "clearInterval(square_maker)");
 
 var grid = create_grid();
 // show_grid();
+draw_random_square(grid);
+square_maker = setInterval(draw_random_square, speed, grid);
 
 function create_grid() {
 	var grid = [];
@@ -23,12 +25,14 @@ function create_grid() {
 	for (var i = 0; i <= grid_width; i++) {
 		for (var j = 0; j <= grid_height; j++) {
 			// Only add points where we have double evens or double odds
-			if ((i % 2 === 0 && j % 2 === 0) || (i % 2 === 1 && j % 2 === 1)) {
+			if ((i % 3 === 0 && j % 3 === 0) || 
+					(i % 3 === 1 && j % 3 === 1) ||
+					(i % 3 === 2 && j % 3 === 2)) {
 				var point = {
 					has_square: false,
 					id: grid.length,
-					x: i * (4 * grid_dim) + grid_dim - square_dim / 2,
-					y: j * (4 * grid_dim) + grid_dim - square_dim / 2
+					x: i * (2 * grid_dim) + grid_dim - square_dim / 2,
+					y: j * (2 * grid_dim) + grid_dim - square_dim / 2
 				};
 				grid.push(point);
 			}
@@ -36,6 +40,7 @@ function create_grid() {
 	}
 	return grid;
 }
+
 
 function show_grid() {
 	var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -51,6 +56,7 @@ function show_grid() {
 		g.appendChild(point);
 	}
 }
+
 
 function draw_random_square(grid) {
 
@@ -70,6 +76,7 @@ function draw_random_square(grid) {
 
 	}
 }
+
 
 function draw_square(grid_point) {
 	// Outer square
@@ -99,6 +106,7 @@ function draw_square(grid_point) {
 
 	fade_in(g, fade_duration);
 }
+
 
 function remove_square(child, grid_point) {
 	svg.removeChild(child);
@@ -138,5 +146,3 @@ function fade_out (svg_element, duration) {
 	setTimeout(step, step_time);
 }
 
-draw_random_square(grid);
-square_maker = setInterval(draw_random_square, speed, grid);
