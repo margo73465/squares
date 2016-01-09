@@ -16,7 +16,6 @@ svg.setAttribute("onclick", "clearInterval(square_maker)");
 
 var grid = create_grid();
 var total_squares = 0;
-// show_grid();
 draw_random_square(grid);
 square_maker = setInterval(draw_random_square, speed, grid);
 
@@ -60,23 +59,17 @@ function show_grid() {
 
 
 function draw_random_square(grid) {
-
-  console.log(total_squares / grid.length);
   var id = Math.floor(Math.random() * grid.length);
 
   if (grid[id].has_square === false) {
-
     grid[id].has_square = true;
     draw_square(grid[id]);
     total_squares += 1;
-
   } else {
-
     var child = svg.getElementById("square_" + id);
     fade_out(child, fade_duration);
     setTimeout(remove_square, fade_duration, child, id);
     total_squares -= 1;
-
   }
 }
 
@@ -97,15 +90,6 @@ function draw_square(grid_point) {
   outer_square.style["stroke-width"] = grid_dim;
   outer_square.style.fill = "none";
   g.appendChild(outer_square);
-
-  // var inner_square = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
-  // inner_square.setAttribute("x", x + grid_dim);
-  // inner_square.setAttribute("y", y + grid_dim);
-  // inner_square.setAttribute("width", square_dim - grid_dim * 2);
-  // inner_square.setAttribute("height", square_dim - grid_dim * 2);
-  // inner_square.style.stroke = "none";
-  // inner_square.style.fill = "black";
-  // g.appendChild(inner_square);
 
   fade_in(g, fade_duration);
 }
