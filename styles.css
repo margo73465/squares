@@ -1,0 +1,7 @@
+body {
+  background-color: black;
+  margin: 0px;
+}
+.square {
+  transition: opacity 600ms;
+}
