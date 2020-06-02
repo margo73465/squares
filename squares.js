@@ -1,33 +1,31 @@
-var height = window.innerHeight;
-var width = window.innerWidth;
-var grid_dim = Math.floor(width / 80);
-var square_dim = 7 * grid_dim;
-var grid_height = Math.ceil(height / (square_dim + grid_dim)) * 4;
-var grid_width = Math.ceil(width / (square_dim + grid_dim)) * 4; 
-var square_maker;
-var speed = 600; // Must be greater than 200 for fades to work
-var fade_duration = speed - 200;
+const height = window.innerHeight;
+const width = window.innerWidth;
+const grid_dim = Math.floor(width / 80);
+const square_dim = 7 * grid_dim;
+const grid_height = Math.ceil(height / (square_dim + grid_dim)) * 4;
+const grid_width = Math.ceil(width / (square_dim + grid_dim)) * 4; 
+const speed = 600;
+let square_maker;
 
-var svg = document.getElementsByTagName('svg')[0];
+const svg = document.getElementById('svg');
 svg.setAttribute("width", width);
 svg.setAttribute("height", height);
 svg.setAttribute("onclick", "clearInterval(square_maker)");
 
-var grid = create_grid();
-var total_squares = 0;
-draw_random_square(grid);
+const grid = create_grid();
+let total_squares = 0;
 square_maker = setInterval(draw_random_square, speed, grid);
 
 function create_grid() {
-  var grid = [];
+  const grid = [];
 
-  for (var i = 0; i <= grid_width; i++) {
-    for (var j = 0; j <= grid_height; j++) {
+  for (let i = 0; i <= grid_width; i++) {
+    for (let j = 0; j <= grid_height; j++) {
       // Only add points where we have double evens or double odds
       if ((i % 3 === 0 && j % 3 === 0) ||
           (i % 3 === 1 && j % 3 === 1) ||
           (i % 3 === 2 && j % 3 === 2)) {
-        var point = {
+        const point = {
           has_square: false,
           id: grid.length,
           x: i * (2 * grid_dim) + grid_dim - square_dim / 2,
@@ -41,25 +39,20 @@ function create_grid() {
   return grid;
 }
 
-
 function show_grid() {
-  var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  svg.appendChild(g);
-
-  for (var i = 0; i < grid.length; i++) {
-    var point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  for (let i = 0; i < grid.length; i++) {
+    const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     point.setAttribute("cx", grid[i].x);
     point.setAttribute("cy", grid[i].y);
     point.setAttribute("r", 3);
     point.setAttribute("id", "grid_" + i);
     point.style.fill = "red";
-    g.appendChild(point);
+    svg.appendChild(point);
   }
 }
 
-
 function draw_random_square(grid) {
-  var id = Math.floor(Math.random() * grid.length);
+  const id = Math.floor(Math.random() * grid.length);
 
   if (grid[id].has_square === false) {
     grid[id].has_square = true;
@@ -72,9 +65,8 @@ function draw_random_square(grid) {
   }
 }
 
-
 function draw_square(grid_point) {
-  var square = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+  const square = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
   square.setAttribute("x", grid_point.x);
   square.setAttribute("y", grid_point.y);
   square.setAttribute("width", square_dim - grid_dim);
@@ -87,4 +79,3 @@ function draw_square(grid_point) {
   svg.appendChild(square);
   grid_point.svg = square;
 }
-
